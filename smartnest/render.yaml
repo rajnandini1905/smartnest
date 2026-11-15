@@ -1,0 +1,35 @@
+services:
+  # 1. Backend Web Service
+  - type: web
+    name: smartnest-backend
+    runtime: node
+    plan: free
+    rootDir: smartnest/backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: MONGODB_URI
+        value: mongodb+srv://rknandini19052005_db_user:3Uo5O3W9YIWHufTY@cluster0.dixpk4a.mongodb.net/smartnest?retryWrites=true&w=majority
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: "*"
+
+  # 2. Frontend React / Vite Static Site
+  - type: web
+    name: smartnest-frontend
+    runtime: static
+    rootDir: smartnest/frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: smartnest-backend
+          property: host
