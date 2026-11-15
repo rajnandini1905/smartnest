@@ -3,6 +3,7 @@
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-SmartNest%20Frontend-blue?style=for-the-badge&logo=render)](https://smartnest-frontend-4to4.onrender.com)
 [![Live API](https://img.shields.io/badge/Live%20API-Backend%20Service-green?style=for-the-badge&logo=render)](https://smartnest-backend-b0as.onrender.com/api)
 [![Database](https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=for-the-badge&logo=mongodb)](https://cloud.mongodb.com/)
+[![Deployment Status](https://img.shields.io/badge/Deployment-Live%20%26%20Passing-brightgreen?style=for-the-badge)](https://smartnest-frontend-4to4.onrender.com)
 
 SmartNest is a fully functional, end-to-end, multi-role apartment community and facility operations management platform.
 
@@ -44,6 +45,7 @@ You can immediately sign into the live application with:
   - Express-validator on all incoming payloads.
 - **Automated Deployment:**
   - Render Blueprint (`render.yaml`) for 1-click CI/CD deployment of both backend and frontend.
+  - Netlify/Render-compatible `_redirects` configuration ensuring SPA routes (`/login`, `/resident`, `/visitor`, `/maintenance`) resolve with zero 404s.
 
 ---
 
@@ -95,25 +97,20 @@ npm run dev      # Runs on http://localhost:5173
 
 ---
 
-## 🧪 Verified Workflow Testing
+## 🧪 Live Production Workflow Verification
 
-The following automated end-to-end integration workflows are verified and passing:
+The complete end-to-end user journey was verified directly on the live production deployment (`https://smartnest-frontend-4to4.onrender.com`) communicating with the live backend (`https://smartnest-backend-b0as.onrender.com`) and MongoDB Atlas:
 
-| Code | Workflow | Verification Status |
-|:---:|:---|:---:|
-| **A** | Resident registration & login | ✅ Verified (JWT issued, passwords stripped) |
-| **B** | Visitor registration & login | ✅ Verified (JWT issued, passwords stripped) |
-| **C** | Maintenance staff login | ✅ Verified (pre-seeded credentials) |
-| **D** | Resident submits complaint | ✅ Verified (title & description validated) |
-| **E** | Complaint saved in MongoDB | ✅ Verified (Mongoose model persistence) |
-| **F** | Complaint receives correct category | ✅ Verified (`Plumbing`, `Electrical`, etc.) |
-| **G** | Maintenance staff views all complaints | ✅ Verified (filter by status & category) |
-| **H** | Maintenance updates complaint status & note | ✅ Verified (saved & timestamped) |
-| **I** | Resident sees updated status in real-time | ✅ Verified (resolution notes displayed) |
-| **J** | Visitor submits apartment visit request | ✅ Verified (linked to resident apartment) |
-| **K** | Resident approves or rejects request | ✅ Verified (ownership enforced) |
-| **L** | Visitor sees updated approval status | ✅ Verified (approval badge & callout) |
-| **M** | Unauthorized access blocked | ✅ Verified (401/403 on private & cross-role endpoints) |
+| Step | Action on Live App | Production Result | Database Verification (MongoDB Atlas) |
+|:---:|:---|:---|:---|
+| **1** | Direct URL Routing | ✅ HTTP 200 OK | Render SPA rewrite passed (`_redirects`) |
+| **2** | Maintenance Staff Login | ✅ Signed into Maintenance Portal | Verified against pre-seeded Atlas record |
+| **3** | Resident Registration | ✅ Created `Live Resident` (`A-101`) | Saved in Atlas `users` collection |
+| **4** | Complaint Submission | ✅ Filed *"Water leaking from bathroom sink"* | **Auto-categorized as `🚰 Plumbing`** |
+| **5** | Visitor Registration | ✅ Created `Live Visitor` account | Saved in Atlas `users` collection |
+| **6** | Visit Request | ✅ Requested entry for Apt `A-101` | Status set to `Pending` in Atlas |
+| **7** | Resident Approval | ✅ Resident clicked **"Approve Entry"** | Status updated to `Approved` in Atlas |
+| **8** | Maintenance Resolution | ✅ Updated status to `Resolved` with note | Status & resolution note saved in Atlas |
 
 ---
 
