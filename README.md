@@ -1,15 +1,34 @@
 # 🏢 SmartNest – AI-Based Apartment Management System
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-SmartNest%20Frontend-blue?style=for-the-badge&logo=render)](https://smartnest-frontend-4to4.onrender.com)
+[![Live API](https://img.shields.io/badge/Live%20API-Backend%20Service-green?style=for-the-badge&logo=render)](https://smartnest-backend-b0as.onrender.com/api)
+[![Database](https://img.shields.io/badge/Database-MongoDB%20Atlas-47A248?style=for-the-badge&logo=mongodb)](https://cloud.mongodb.com/)
+
 SmartNest is a fully functional, end-to-end, multi-role apartment community and facility operations management platform.
+
+---
+
+## 🌐 Live Production Deployments
+
+- **🖥️ Web Application:** **[https://smartnest-frontend-4to4.onrender.com](https://smartnest-frontend-4to4.onrender.com)**
+- **⚙️ Backend REST API:** **[https://smartnest-backend-b0as.onrender.com/api](https://smartnest-backend-b0as.onrender.com/api)**
+- **🗄️ Database:** Live MongoDB Atlas Cloud Cluster
+
+### 🔑 Pre-Seeded Maintenance Credentials
+You can immediately sign into the live application with:
+- **Email:** `maintenance@smartnest.com`
+- **Password:** `Maintenance@123`
+
+*(Residents and visitors can register directly on the live `/register` page).*
 
 ---
 
 ## 🚀 Key Highlights & Architecture
 
-- **Real Database:** Persistent MongoDB via Mongoose. All users, complaints, and visitor requests persist across restarts.
+- **Real Database:** Persistent MongoDB via Mongoose. Connected to MongoDB Atlas Cloud Cluster. All users, complaints, and visitor requests persist across restarts.
 - **Real Authentication & Authorization:**
   - Password hashing with **bcrypt** (12 salt rounds, never stored or returned in plaintext).
-  - Stateles **JWT** authentication with 7-day expiration.
+  - Stateless **JWT** authentication with 7-day expiration.
   - Server-side role authorization guards (`resident`, `visitor`, `maintenance`).
   - Frontend protected routes with automatic role-based redirecting.
 - **Three Fully Functional Portals:**
@@ -22,14 +41,17 @@ SmartNest is a fully functional, end-to-end, multi-role apartment community and 
   - Strict Cross-Origin Resource Sharing (CORS) configuration.
   - Sensitive passwords stripped at model serialization (`toJSON`).
   - Cross-apartment authorization controls: residents can only approve requests targeting their own unit.
-  - Express-validator on incoming payloads.
+  - Express-validator on all incoming payloads.
+- **Automated Deployment:**
+  - Render Blueprint (`render.yaml`) for 1-click CI/CD deployment of both backend and frontend.
 
 ---
 
 ## 🛠 Tech Stack
 
-- **Backend:** Node.js (v20+), Express.js, MongoDB, Mongoose, JSON Web Tokens (`jsonwebtoken`), `bcryptjs`, `express-validator`, `cors`, `dotenv`
+- **Backend:** Node.js (v20+), Express.js, MongoDB Atlas, Mongoose, JSON Web Tokens (`jsonwebtoken`), `bcryptjs`, `express-validator`, `cors`, `dotenv`
 - **Frontend:** React 18, Vite 5, TailwindCSS 3, React Router DOM (v6), Axios, `react-hot-toast`
+- **Hosting / CI-CD:** Render (Web Service + Static Site), Render Blueprint Automation
 
 ---
 
@@ -37,76 +59,38 @@ SmartNest is a fully functional, end-to-end, multi-role apartment community and 
 
 - **Node.js:** v18.0.0 or higher
 - **npm:** v9.0.0 or higher
-- **MongoDB:** v6.0 or higher (running locally on port 27017 or a MongoDB Atlas connection string)
+- **MongoDB:** MongoDB Atlas cloud cluster (or local MongoDB v6.0+)
 
 ---
 
-## ⚡ Quick Start Guide
+## ⚡ Quick Start Guide (Local Development)
 
-### 1. Clone & Navigate to Project
+### 1. Clone the Project
 
 ```bash
+git clone https://github.com/rajnandini1905/smartnest.git
 cd smartnest
 ```
 
-### 2. Configure Backend
+### 2. Configure & Start Backend
 
-Navigate to the `backend` folder:
 ```bash
-cd backend
+cd smartnest/backend
 npm install
+cp .env.example .env
+# Edit .env to set your MONGODB_URI and JWT_SECRET
+npm run seed     # Seeds maintenance staff account
+npm start        # Runs on http://localhost:5001
 ```
 
-Ensure `.env` exists (copied from `.env.example`):
-```env
-MONGODB_URI=mongodb://localhost:27017/smartnest
-JWT_SECRET=smartnest_super_secret_jwt_key_2024_change_in_production
-PORT=5001
-FRONTEND_URL=http://localhost:5173
-```
-*(Note: Port 5001 is used by default to prevent conflicts with macOS AirPlay Receiver on port 5000).*
+### 3. Configure & Start Frontend
 
-### 3. Seed Maintenance Staff Account
-
-Run the database seed script to initialize the pre-authorized maintenance staff account:
-```bash
-npm run seed
-```
-
-**Default Maintenance Credentials:**
-- **Email:** `maintenance@smartnest.com`
-- **Password:** `Maintenance@123`
-
-### 4. Start the Backend Server
-
-```bash
-npm start
-# Server will run on: http://localhost:5001
-```
-
-### 5. Configure & Start Frontend
-
-In a new terminal window, navigate to `frontend`:
+In a separate terminal:
 ```bash
 cd smartnest/frontend
 npm install
-```
-
-Ensure `.env` exists:
-```env
-VITE_API_URL=http://localhost:5001/api
-```
-
-Start the Vite development server:
-```bash
-npm run dev
-# Frontend will run on: http://localhost:5173
-```
-
-To test the optimized production build:
-```bash
-npm run build
-npm run preview
+cp .env.example .env
+npm run dev      # Runs on http://localhost:5173
 ```
 
 ---
@@ -140,7 +124,7 @@ The following automated end-to-end integration workflows are verified and passin
 - `POST /login` – Sign in and retrieve JWT token.
 
 ### Complaints (`/api/complaints`)
-- `POST /` – Submit new complaint (Resident only).
+- `POST /` – Submit new complaint (Resident only, auto-categorized).
 - `GET /` – Fetch complaints (Residents see own; Maintenance sees all with `?status=` and `?category=` filters).
 - `PATCH /:id/status` – Update complaint status and attach resolution note (Maintenance only).
 
